@@ -1,54 +1,20 @@
-# React + TypeScript + Vite
+# Playwright macros feature request repro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repo contains code relating to a feature request for playwright. I am unable to write tests that are importing macros as I cannot specify the babel plugins to use for test code.
 
-Currently, two official plugins are available:
+## What's in this project?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+In the `lingui` folder, there is:
+1. `myMsg.ts` which exports `item`, which is a lingui macro.
+2. `LinguiExample.tsx` which is a React component that imports and logs `item`.
+3. `LinguiExample.spec.tsx` which contains two tests. The first mounts `LinguiExample` component, which in turn imports `item`. The second imports `item` directly. The second test is initially commented out.
 
-## Expanding the ESLint configuration
+In `playwright-ct.config.ts` I have added babel plugin `@lingui/babel-plugin-lingui-macro` to the `ctViteConfig`. This follows set up instructions from [lingui docs](https://lingui.dev/installation#vite).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+In `patches` folder is a patch file for `@playwright/experimental-ct-core` which adds `"@lingui/babel-plugin-lingui-macro"`.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Reproduction steps
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. `npm install` then `npm run test-ct`. See that `component importing lingui` test passes.
+2. Uncomment lines 15-22 in `LinguiExample.spec.tsx`. Run `npm run test-ct` and playwright should fail to build with `SyntaxError: The requested module '@lingui/core/macro' does not provide an export named 'msg'`.
+3. Apply the patch file with `npx patch-package`. Run `npm run test-ct` again and see both tests build and pass.
