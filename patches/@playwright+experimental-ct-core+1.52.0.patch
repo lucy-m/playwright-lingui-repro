@@ -1,0 +1,14 @@
+diff --git a/node_modules/@playwright/experimental-ct-core/index.js b/node_modules/@playwright/experimental-ct-core/index.js
+index 1a4f185..984bdcd 100644
+--- a/node_modules/@playwright/experimental-ct-core/index.js
++++ b/node_modules/@playwright/experimental-ct-core/index.js
+@@ -26,7 +26,8 @@ const defineConfig = (...configs) => {
+       ...original['@playwright/test'],
+       plugins: [() => createPlugin()],
+       babelPlugins: [
+-        [require.resolve('./lib/tsxTransform')]
++        [require.resolve('./lib/tsxTransform')],
++        ["@lingui/babel-plugin-lingui-macro"]
+       ],
+     }
+   };
