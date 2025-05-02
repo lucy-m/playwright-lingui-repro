@@ -1,5 +1,5 @@
 {
-  "name": "playwright-node-env-repro",
+  "name": "playwright-lingui-macro-repro",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,11 +11,14 @@
     "test-ct": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
+    "@lingui/react": "^5.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@lingui/babel-plugin-lingui-macro": "^5.3.1",
+    "@lingui/vite-plugin": "^5.3.1",
     "@playwright/experimental-ct-react": "^1.52.0",
     "@types/node": "^22.15.3",
     "@types/react": "^19.0.10",
